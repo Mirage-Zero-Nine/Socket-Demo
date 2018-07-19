@@ -33,7 +33,6 @@ int main(int argc, char *argv[]) {
     int socketDescriptor;                   // Socket descriptor to server.
     int connectStatus;
     int getAddressStatus;
-    char stringFunction[10];
     char receiveMessage[BUFSIZ];
     char sendMessage[BUFSIZ];
     char *time_string;
@@ -125,7 +124,7 @@ int main(int argc, char *argv[]) {
         current_time_arr = time(NULL);
         time_string = ctime(&current_time_arr);
 
-        printf("Receive message %s at %s", stringFunction, time_string);
+        printf("Receive message '%s' at %s", receiveMessage, time_string);
 
     }
 }

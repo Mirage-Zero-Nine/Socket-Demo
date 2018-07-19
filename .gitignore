@@ -55,3 +55,9 @@ dkms.conf
 .idea/
 .git/
 cmake-build-debug/
+client
+Main_Server
+server
+serverA
+serverB
+serverC

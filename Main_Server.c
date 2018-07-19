@@ -209,7 +209,7 @@ int main(void) {
             if (sendServerB < 0) {
                 perror("Error occurred when send message to server B! \n");
             } else {
-                printf("Main Server sent '%s' to Server A. \n", message);
+                printf("Send '%s' to Server B. \n", message);
             }
 
             /* Relay message to Server C. */
@@ -219,7 +219,7 @@ int main(void) {
             if (sendServerC < 0) {
                 printf("Error occurred when send message to server C! \n");
             } else {
-                printf("Main Server sent '%s' to Server A. \n", message);
+                printf("Send '%s' to Server C. \n", message);
             }
 
             /* Receive time from server A */

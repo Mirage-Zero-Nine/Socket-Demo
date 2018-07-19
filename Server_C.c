@@ -79,7 +79,7 @@ int main() {
         time_string = ctime(&current_time);
 
         /* Send confirm message back */
-        printf("Server C received message '%s' at '%s'. \n", receiveBuffer, time_string);
+        printf("Server C received message '%s' at %s. \n", receiveBuffer, time_string);
         sendStatus = sendto(socketDescriptor, time_string, sizeof(time_string), 0,
                             (struct sockaddr *) &socketAddressStorage, sizeOfStructure);
         if (sendStatus < 0) {
