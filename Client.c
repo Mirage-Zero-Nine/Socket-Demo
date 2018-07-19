@@ -26,7 +26,8 @@
 #define MAIN_SERVER_TCP_PORT "25672"
 
 /* TCP port on client is dynamic assignment.
- * Client connects to server on port 25672. */
+ * Client connects to server on port 25672.
+ */
 
 int main(int argc, char *argv[]) {
 
@@ -34,15 +35,14 @@ int main(int argc, char *argv[]) {
     int connectStatus;
     int getAddressStatus;
     char receiveMessage[BUFSIZ];
-    char sendMessage[BUFSIZ];
+//    char sendMessage[BUFSIZ];
     char *time_string;
-    char input_message[BUFSIZ];
+    char inputMessage[BUFSIZ];
     struct addrinfo socketAddress;
     struct addrinfo *addressResult;         // Address information result.
     ssize_t receiveMessageSize;             // Socket structure
     ssize_t sendMessageByte;
     time_t current_time;
-    time_t current_time_arr;
 
     if (argc > 2) {
         printf("Only accept one argument!");
@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
         /* If there is only execution command as terminal input */
         if (argc == 1) {
             printf("Enter message: \n");
-            scanf("%s", input_message);
+            scanf("%s", inputMessage);
         }
 
         /* Exit command and close socket. */
-        if (strcmp(input_message, "exit") == 0) {
+        if (strcmp(inputMessage, "exit") == 0) {
             close(socketDescriptor);
             return 0;
         }
@@ -72,62 +72,52 @@ int main(int argc, char *argv[]) {
         /* Get address information. */
         getAddressStatus = getaddrinfo(NULL, MAIN_SERVER_TCP_PORT, &socketAddress, &addressResult);
         if (getAddressStatus != 0) {
-            perror("Error occurred when getting address information");
+            perror("Error occurred when getting address information! \n");
             return 1;
         }
 
         /* Create socket. */
         socketDescriptor = socket(addressResult->ai_family, addressResult->ai_socktype, addressResult->ai_protocol);
         if (socketDescriptor < 0) {
-            perror("Error occurred when creating socket");
+            perror("Error occurred when creating socket! \n");
             return 1;
         }
 
         /* Connect socket. */
         connectStatus = connect(socketDescriptor, addressResult->ai_addr, addressResult->ai_addrlen);
         if (connectStatus < 0) {
-            perror("Error occurred when connecting to socket");
+            perror("Error occurred when connecting to socket! \n");
             return 1;
         }
 
-        printf("The client is up and running! \n");
+        /* Send message. */
+        sendMessageByte = send(socketDescriptor, inputMessage, sizeof(inputMessage), 0);   // send(): TCP connection.
+        if (sendMessageByte < 0) {
+            perror("Error occurred when sending message! \n");
+        }
 
-        /* Send message to server and receive the return value. */
-        memset(sendMessage, '\0', sizeof(sendMessage));     // String initialization, '\0' -> null.
-
+        /* Get current time */
         current_time = time(NULL);
         time_string = ctime(&current_time);
 
-        if (argc == 1) {
-            strcat(sendMessage, input_message);
-        } else {
-            strcat(sendMessage, time_string);
-        }
-
-        /* Send message. */
-        sendMessageByte = send(socketDescriptor, sendMessage, sizeof(sendMessage), 0);      // send(): TCP connection.
-        if (sendMessageByte < 0) {
-            perror("Send Message Length Error. \n");                                // Check success.
-        }
-
-        printf("The client sent '%s' at %s. \n", sendMessage, time_string);
+        printf("%.*s Client sent a message: \n", (int) strlen(time_string) - 1, time_string);
+        printf("%s \n", inputMessage);
 
         /* Receive message from the server.*/
         memset(&receiveMessage, '\0', sizeof(receiveMessage));
-        receiveMessageSize = recv(socketDescriptor, receiveMessage, sizeof(receiveMessage),
-                                  0);      // recv(): TCP connection.
+        receiveMessageSize = recv(socketDescriptor, receiveMessage, sizeof(receiveMessage), 0);     // TCP connection.
 
         if (receiveMessageSize < 0) {
-            perror("Error occurred when receiving message");
+            perror("Error occurred when receiving message! \n");
         }
 
-        current_time_arr = time(NULL);
-        time_string = ctime(&current_time_arr);
+        /* Get current time */
+        current_time = time(NULL);
+        time_string = ctime(&current_time);
 
-        printf("Receive message '%s' at %s", receiveMessage, time_string);
-
+        printf("%.*s Receive one message: \n", (int) strlen(time_string) - 1, time_string);
+        printf("%s \n", receiveMessage);
     }
 }
-
 
 
