@@ -61,7 +61,7 @@ int main() {
         return 1;
     }
 
-    printf("Server C is up and running using UDP on port 23672. \n");
+    printf("Server C online. \n");
 
     while (1) {
 
@@ -70,7 +70,7 @@ int main() {
         receiveBytes = recvfrom(socketDescriptor, receiveBuffer, sizeof receiveBuffer, 0,
                                 (struct sockaddr *) &socketAddressStorage, &sizeOfStructure);
         if (receiveBytes == -1) {
-            perror("Error occurred when receiving messages from Main Server. \n");
+            perror("Error occurred when receiving messages from Main Server! \n");
             return 1;
         }
 
@@ -79,14 +79,24 @@ int main() {
         time_string = ctime(&current_time);
 
         /* Send confirm message back */
-        printf("Server C received message '%s' at %s. \n", receiveBuffer, time_string);
+        printf("%.*s Received one client message from Main Server. \n", (int) strlen(time_string) - 1, time_string);
+        printf("%s \n", receiveBuffer);
+//        char ack[BUFSIZ] = "Message received! ";
+
+        /* Get current time */
+        current_time = time(NULL);
+        time_string = ctime(&current_time);
+        strcat(time_string, receiveBuffer);
+
         sendStatus = sendto(socketDescriptor, time_string, sizeof(time_string), 0,
                             (struct sockaddr *) &socketAddressStorage, sizeOfStructure);
         if (sendStatus < 0) {
             perror("Error occurred when sending message! \n");
             return 1;
         } else {
-            printf("Server C has sent message. \n");
+            printf("Server C has sent message: \n");
+            printf("%s \n", time_string);
+
         }
     }
 }

@@ -61,7 +61,8 @@ int main() {
         return 1;
     }
 
-    printf("Server B is up and running using UDP on port 22672. \n");
+//    printf("Server B is up and running using UDP on port 22672. \n");
+    printf("Server B online. \n");
 
     while (1) {
 
@@ -79,14 +80,23 @@ int main() {
         time_string = ctime(&current_time);
 
         /* Send confirm message back */
-        printf("Server B received message '%s' at %s. \n", receiveBuffer, time_string);
+        printf("%.*s Received one client message from Main Server. \n", (int) strlen(time_string) - 1, time_string);
+        printf("%s \n", receiveBuffer);
+//        char ack[BUFSIZ] = "Message received! ";
+
+        /* Get current time */
+        current_time = time(NULL);
+        time_string = ctime(&current_time);
+        strcat(time_string, receiveBuffer);
+
         sendStatus = sendto(socketDescriptor, time_string, sizeof(time_string), 0,
                             (struct sockaddr *) &socketAddressStorage, sizeOfStructure);
         if (sendStatus < 0) {
             perror("Error occurred when sending message! \n");
             return 1;
         } else {
-            printf("Server B has sent message. \n");
+            printf("Server B has sent message: \n");
+            printf("%s \n", time_string);
         }
     }
 }
