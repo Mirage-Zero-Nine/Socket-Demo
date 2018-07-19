@@ -6,7 +6,6 @@
  * Main server.
  * This server is responsible for receiving message from client and relay it to server a, b, c.
  * Plus, it will receive message from server a, b, c and send back to client.
- *
  */
 
 #include <stdio.h>
