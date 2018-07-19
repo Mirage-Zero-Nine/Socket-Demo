@@ -1,8 +1,8 @@
 all: 
-	gcc -Wall serverA.c -o serverA -lm
-	gcc -Wall serverB.c -o serverB -lm
-	gcc -Wall serverC.c -o serverC -lm
-	gcc -Wall aws.c -o aws
+	gcc -Wall Server_A.c -o serverA -lm
+	gcc -Wall Server_B.c -o serverB -lm
+	gcc -Wall Server_C.c -o serverC -lm
+	gcc -Wall Main_Server.c -o server
 	gcc -Wall client.c -o client
 
 # compiler flags:
@@ -16,13 +16,13 @@ serverB :
 	./serverB
 serverC : 
 	./serverC
-aws: 
-	./aws
+server: 
+	./server
 
-.PHONY: clean serverA serverB serverC aws all
+.PHONY: clean serverA serverB serverC server all
 clean:
 	$(RM) serverA
 	$(RM) serverB
 	$(RM) serverC
 	$(RM) client
-	$(RM) aws
+	$(RM) server

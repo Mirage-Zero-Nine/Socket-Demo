@@ -2,6 +2,12 @@
 // Created by BorisMirage on 7/16/18.
 //
 
+/*
+ * This is the client that send message to main server.
+ * Execute by terminal command ./client after make all
+ * Input message after message is shown in screen.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -31,6 +37,7 @@ int main(int argc, char *argv[]) {
     char receiveMessage[BUFSIZ];
     char sendMessage[BUFSIZ];
     char *time_string;
+    char input_message[BUFSIZ];
     struct addrinfo socketAddress;
     struct addrinfo *addressResult;         // Address information result.
     ssize_t receiveMessageSize;             // Socket structure
@@ -41,6 +48,12 @@ int main(int argc, char *argv[]) {
     if (argc > 2) {
         printf("Only accept one argument!");
         return -1;
+    }
+
+    /* If there is only execution command as terminal input */
+    if (argc == 1) {
+        printf("Enter message: \n");
+        scanf("%s", input_message);
     }
 
     /* Structure initialization . */
@@ -79,7 +92,7 @@ int main(int argc, char *argv[]) {
     time_string = ctime(&current_time);
 
     if (argc == 1) {
-        strcat(sendMessage, argv[0]);
+        strcat(sendMessage, input_message);
     } else {
         strcat(sendMessage, time_string);
     }
