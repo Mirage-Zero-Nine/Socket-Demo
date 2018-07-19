@@ -5,6 +5,10 @@ all:
 	gcc -Wall Main_Server.c -o server
 	gcc -Wall client.c -o client
 
+client:
+	gcc -Wall client.c -o client
+
+
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
