@@ -36,28 +36,24 @@ int main(void) {
     int UDPBindStatus;
     int acceptClientDescriptor;
     int getAddressStatus;
-
-    char message[BUFSIZ];
+    char clientMessage[BUFSIZ];
     char receiverBuffer[BUFSIZ];
     char sendDataServerA[BUFSIZ], sendDataServerB[BUFSIZ], sendDataServerC[BUFSIZ];
     char dataClientA[BUFSIZ], dataClientB[BUFSIZ], dataClientC[BUFSIZ];
     char sendClient[BUFSIZ];
     char *time_string;
     time_t current_time;
-
     struct addrinfo socketAddressTCP, *resultTCP;
     struct addrinfo socketAddressUDP, *resultUDP;
     struct sockaddr_in addressServerA, addressServerB, addressServerC, addressClient;
-
     socklen_t socketAddressLengthAWS = sizeof(struct sockaddr_in);
     socklen_t addressLengthServerA = sizeof(addressServerA);
     socklen_t addressLengthServerB = sizeof(addressServerB);
     socklen_t addressLengthServerC = sizeof(addressServerC);
-
     ssize_t receiveClientBytes;
     ssize_t sendClientLength;
     ssize_t sendServerA, sendServerB, sendServerC;
-    ssize_t receiveClientA, receiveClientB, receiveClientC;
+    ssize_t receiveServerA, receiveServerB, receiveServerC;
 
     /* Create client TCP socket. */
     memset(&socketAddressTCP, 0, sizeof(socketAddressTCP));
@@ -124,7 +120,7 @@ int main(void) {
         perror("Error occurred when converting server C address information! \n");
     }
 
-    printf("Main Server is online. \n");
+    printf("Main Server online. \n");
 
     /* Listen to TCP traffic. */
     listenStatus = listen(socketDescriptorTCP, 1);
@@ -174,85 +170,124 @@ int main(void) {
         /* After data received, send them to server A, B, C. */
         if (receiveClientBytes > 0) {
 
-            /* Obtain data from client. */
-            memset(message, '\0', sizeof(message));
-            strcat(message, receiverBuffer);
-
             /* Get current time */
             current_time = time(NULL);
             time_string = ctime(&current_time);
 
-            printf("Receive message '%s' from the client using TCP over port 25672 at %s. \n", message, time_string);
+//            printf("Receive message '%s' from the client using TCP over port 25672 at %s. \n", message, time_string);
+            printf("%.*s Receive one message from Client: \n", (int) strlen(time_string) - 1, time_string);
+            printf("%s \n", receiverBuffer);
+            strcat(clientMessage, receiverBuffer);
 
             /* Message initialization. */
             memset(sendDataServerA, '\0', sizeof(sendDataServerA));
             memset(sendDataServerB, '\0', sizeof(sendDataServerB));
             memset(sendDataServerC, '\0', sizeof(sendDataServerC));
-            strcat(sendDataServerA, message);
-            strcat(sendDataServerB, message);
-            strcat(sendDataServerC, message);
+            strcat(sendDataServerA, clientMessage);
+            strcat(sendDataServerB, clientMessage);
+            strcat(sendDataServerC, clientMessage);
 
-            /* Relay message to Server A */
+            /* Relay client message to Server A */
             sendServerA = sendto(socketDescriptorUDP, sendDataServerA, sizeof(sendDataServerA), 0,
                                  (struct sockaddr *) &addressServerA,
                                  sizeof(addressServerA));
             if (sendServerA < 0) {
                 perror("Error occurred when send message to server A! \n");
             } else {
-                printf("Send '%s' to Server A. \n", message);
+
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Send one message to Server A. \n", (int) strlen(time_string) - 1, time_string);
+                printf("%s \n", clientMessage);
             }
 
-            /* Relay message to Server B. */
+            /* Relay client message to Server B. */
             sendServerB = sendto(socketDescriptorUDP, sendDataServerB, sizeof(sendDataServerB), 0,
                                  (struct sockaddr *) &addressServerB,
                                  sizeof(addressServerB));
             if (sendServerB < 0) {
                 perror("Error occurred when send message to server B! \n");
             } else {
-                printf("Send '%s' to Server B. \n", message);
+
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Send one message to Server B. \n", (int) strlen(time_string) - 1, time_string);
+                printf("%s \n", clientMessage);
+
             }
 
-            /* Relay message to Server C. */
+            /* Relay client message to Server C. */
             sendServerC = sendto(socketDescriptorUDP, sendDataServerC, sizeof(sendDataServerC), 0,
                                  (struct sockaddr *) &addressServerC,
                                  sizeof(addressServerC));
             if (sendServerC < 0) {
                 printf("Error occurred when send message to server C! \n");
             } else {
-                printf("Send '%s' to Server C. \n", message);
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Send one message to Server C. \n", (int) strlen(time_string) - 1, time_string);
+                printf("%s \n", clientMessage);
             }
 
-            /* Receive time from server A */
-            receiveClientA = recvfrom(socketDescriptorUDP, dataClientA, sizeof(dataClientA), 0,
+            /* Receive message from server A */
+            receiveServerA = recvfrom(socketDescriptorUDP, dataClientA, sizeof(dataClientA), 0,
                                       (struct sockaddr *) &addressServerA, &addressLengthServerA);
-            if (receiveClientA == -1) {
+            if (receiveServerA == -1) {
                 perror("Error occurred when receive message from server A! \n");
             } else {
-                printf("Message '%s' received from Server A using UDP over port 24672. \n", dataClientA);
+//                printf("Message '%s' received from Server A using UDP over port 24672. \n", dataClientA);
+
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Received one client message from Server A. \n", (int) strlen(time_string) - 1,
+                       time_string);
+                printf("%s \n", dataClientA);
             }
 
-            /* Receive time from server B */
-            receiveClientB = recvfrom(socketDescriptorUDP, dataClientB, sizeof(dataClientB), 0,
+            /* Receive message from server B */
+            receiveServerB = recvfrom(socketDescriptorUDP, dataClientB, sizeof(dataClientB), 0,
                                       (struct sockaddr *) &addressServerB, &addressLengthServerB);
-            if (receiveClientB == -1) {
-                perror("Error occurred when receive message from server B! \n");
+            if (receiveServerB == -1) {
+                perror("Error occurred when receive client message from server B. \n");
             } else {
-                printf("Message '%s' received from Server B using UDP over port 24672. \n", dataClientB);
+
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Received one client message from Server B. \n", (int) strlen(time_string) - 1,
+                       time_string);
+                printf("%s \n", dataClientB);
             }
 
-            /* Receive time from server C */
-            receiveClientC = recvfrom(socketDescriptorUDP, dataClientC, sizeof(dataClientC), 0,
+            /* Receive message from server C */
+            receiveServerC = recvfrom(socketDescriptorUDP, dataClientC, sizeof(dataClientC), 0,
                                       (struct sockaddr *) &addressServerC, &addressLengthServerC);
-            if (receiveClientC == -1) {
+            if (receiveServerC == -1) {
                 printf("Error occurred when receive message from server C! \n");
             } else {
-                printf("Message '%s' received from Server C using UDP over port 24672. \n", dataClientC);
+
+                /* Get current time */
+                current_time = time(NULL);
+                time_string = ctime(&current_time);
+
+                printf("%.*s Received one message from Server C. \n", (int) strlen(time_string) - 1, time_string);
+                printf("%s \n", dataClientC);
             }
 
             memset(sendClient, '\0', sizeof(sendClient));
-            current_time = time(NULL);
-            time_string = ctime(&current_time);
-            strcat(sendClient, time_string);
+//            current_time = time(NULL);
+//            time_string = ctime(&current_time);
+
+            strcat(sendClient, "All server received message. \n");
 
             sendClientLength = send(acceptClientDescriptor, sendClient, sizeof(sendClient), 0);
             if (sendClientLength < 0) {
@@ -260,7 +295,8 @@ int main(void) {
                 return 1;
             } else {
 
-                printf("Send message '%s' to client at %s.  \n", sendClient, time_string);
+                printf("%.*s Send message to client: \n", (int) strlen(time_string) - 1, time_string);
+                printf("%s \n", sendClient);
             }
         }
     }
