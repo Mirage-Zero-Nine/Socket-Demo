@@ -50,78 +50,84 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    /* If there is only execution command as terminal input */
-    if (argc == 1) {
-        printf("Enter message: \n");
-        scanf("%s", input_message);
+    while (1) {
+
+        /* If there is only execution command as terminal input */
+        if (argc == 1) {
+            printf("Enter message: \n");
+            scanf("%s", input_message);
+        }
+
+        /* Exit command and close socket. */
+        if (strcmp(input_message, "exit") == 0) {
+            close(socketDescriptor);
+            return 0;
+        }
+
+        /* Structure initialization . */
+        memset(&socketAddress, 0, sizeof(socketAddress));       // Empty structure.
+        socketAddress.ai_family = AF_INET;
+        socketAddress.ai_socktype = SOCK_STREAM;                // TCP Socket
+        socketAddress.ai_flags = AI_PASSIVE;
+
+        /* Get address information. */
+        getAddressStatus = getaddrinfo(NULL, MAIN_SERVER_TCP_PORT, &socketAddress, &addressResult);
+        if (getAddressStatus != 0) {
+            perror("Error occurred when getting address information");
+            return 1;
+        }
+
+        /* Create socket. */
+        socketDescriptor = socket(addressResult->ai_family, addressResult->ai_socktype, addressResult->ai_protocol);
+        if (socketDescriptor < 0) {
+            perror("Error occurred when creating socket");
+            return 1;
+        }
+
+        /* Connect socket. */
+        connectStatus = connect(socketDescriptor, addressResult->ai_addr, addressResult->ai_addrlen);
+        if (connectStatus < 0) {
+            perror("Error occurred when connecting to socket");
+            return 1;
+        }
+
+        printf("The client is up and running! \n");
+
+        /* Send message to server and receive the return value. */
+        memset(sendMessage, '\0', sizeof(sendMessage));     // String initialization, '\0' -> null.
+
+        current_time = time(NULL);
+        time_string = ctime(&current_time);
+
+        if (argc == 1) {
+            strcat(sendMessage, input_message);
+        } else {
+            strcat(sendMessage, time_string);
+        }
+
+        /* Send message. */
+        sendMessageByte = send(socketDescriptor, sendMessage, sizeof(sendMessage), 0);      // send(): TCP connection.
+        if (sendMessageByte < 0) {
+            perror("Send Message Length Error. \n");                                // Check success.
+        }
+
+        printf("The client sent '%s' at %s. \n", sendMessage, time_string);
+
+        /* Receive message from the server.*/
+        memset(&receiveMessage, '\0', sizeof(receiveMessage));
+        receiveMessageSize = recv(socketDescriptor, receiveMessage, sizeof(receiveMessage),
+                                  0);      // recv(): TCP connection.
+
+        if (receiveMessageSize < 0) {
+            perror("Error occurred when receiving message");
+        }
+
+        current_time_arr = time(NULL);
+        time_string = ctime(&current_time_arr);
+
+        printf("Receive message %s at %s", stringFunction, time_string);
+
     }
-
-    /* Structure initialization . */
-    memset(&socketAddress, 0, sizeof(socketAddress));       // Empty structure.
-    socketAddress.ai_family = AF_INET;
-    socketAddress.ai_socktype = SOCK_STREAM;                // TCP Socket
-    socketAddress.ai_flags = AI_PASSIVE;
-
-    /* Get address information. */
-    getAddressStatus = getaddrinfo(NULL, MAIN_SERVER_TCP_PORT, &socketAddress, &addressResult);
-    if (getAddressStatus != 0) {
-        perror("Error occurred when getting address information");
-        return 1;
-    }
-
-    /* Create socket. */
-    socketDescriptor = socket(addressResult->ai_family, addressResult->ai_socktype, addressResult->ai_protocol);
-    if (socketDescriptor < 0) {
-        perror("Error occurred when creating socket");
-        return 1;
-    }
-
-    /* Connect socket. */
-    connectStatus = connect(socketDescriptor, addressResult->ai_addr, addressResult->ai_addrlen);
-    if (connectStatus < 0) {
-        perror("Error occurred when connecting to socket");
-        return 1;
-    }
-
-    printf("The client is up and running! \n");
-
-    /* Send message to server and receive the return value. */
-    memset(sendMessage, '\0', sizeof(sendMessage));     // String initialization, '\0' -> null.
-
-    current_time = time(NULL);
-    time_string = ctime(&current_time);
-
-    if (argc == 1) {
-        strcat(sendMessage, input_message);
-    } else {
-        strcat(sendMessage, time_string);
-    }
-
-    /* Send message. */
-    sendMessageByte = send(socketDescriptor, sendMessage, sizeof(sendMessage), 0);      // send(): TCP connection.
-    if (sendMessageByte < 0) {
-        perror("Send Message Length Error. \n");                                // Check success.
-    }
-
-    printf("The client sent '%s' at %s. \n", sendMessage, time_string);
-
-    /* Receive message from the server.*/
-    memset(&receiveMessage, '\0', sizeof(receiveMessage));
-    receiveMessageSize = recv(socketDescriptor, receiveMessage, sizeof(receiveMessage),
-                              0);      // recv(): TCP connection.
-
-    if (receiveMessageSize < 0) {
-        perror("Error occurred when receiving message");
-    }
-
-    current_time_arr = time(NULL);
-    time_string = ctime(&current_time_arr);
-
-    printf("Receive message %s at %s", stringFunction, time_string);
-
-    /* Close socket. */
-    close(socketDescriptor);
-    return 0;
 }
 
 
