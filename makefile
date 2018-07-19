@@ -23,10 +23,13 @@ serverC :
 server: 
 	./server
 
-.PHONY: clean serverA serverB serverC server all
+.PHONY: clean serverA serverB serverC server all client clientc
 clean:
 	$(RM) serverA
 	$(RM) serverB
 	$(RM) serverC
 	$(RM) client
 	$(RM) server
+
+clientc:
+	$(RM) client
