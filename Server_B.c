@@ -1,9 +1,8 @@
-//
-// Created by BorisMirage on 7/16/18.
-//
-
-/*
- * Server B.
+/**
+ * Small demo for simulating server.
+ *
+ * Date: 2018/07/16
+ * @author BorisMirage
  */
 
 #include <stdio.h>

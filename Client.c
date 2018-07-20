@@ -1,12 +1,12 @@
-//
-// Created by BorisMirage on 7/16/18.
-//
-
-/*
+/**
  * This is the client that send message to main server.
  * Execute by terminal command ./client after make all
  * Input message after message is shown in screen.
+ *
+ * Date: 2018/07/16
+ * @author BorisMirage
  */
+
 
 #include <stdio.h>
 #include <stdlib.h>

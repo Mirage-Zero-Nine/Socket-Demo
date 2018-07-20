@@ -1,9 +1,8 @@
-//
-// Created by BorisMirage on 7/16/18.
-//
-
-/*
- * Server A.
+/**
+ * Small demo for simulating server.
+ *
+ * Date: 2018/07/16
+ * @author BorisMirage
  */
 
 #include <stdio.h>
@@ -23,6 +22,8 @@
 #define localhost "127.0.0.1"
 
 #define UDP_PORT_SERVER_A "21672"
+
+
 
 int main() {
 

@@ -1,12 +1,12 @@
-//
-// Created by BorisMirage on 7/16/18.
-//
-
-/*
+/**
  * Main server.
  * This server is responsible for receiving message from client and relay it to server a, b, c.
  * Plus, it will receive message from server a, b, c and send back to client.
+ *
+ * Date: 2018/07/16
+ * @author BorisMirage
  */
+
 
 #include <stdio.h>
 #include <stdlib.h>
